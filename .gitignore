@@ -1,0 +1,4 @@
+**/__pycache__/
+.DS_Store
+mrt_app/fixtures/raw_data/mrt/
+mrt_app/fixtures/mrt
