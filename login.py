@@ -41,7 +41,7 @@ def get_accounts():
 
 
 def login_trade_api():
-    timeout=5000
+    timeout=10000
     trade_com.ComStatus()
     trade_com.Connect(TRADE_HOST, TRADE_PORT, timeout)
     while True:
@@ -56,9 +56,10 @@ if __name__ == '__main__':
     brokers, accounts = login_quote_api()
     login_trade_api()
 
-    while brokers and accounts:
-        trade_com.RetrieveWsInventorySum('B', brokers[0], accounts[0], '2330')
-        time.sleep(1)
+    for broker, account in zip(brokers, accounts):
+        resp = trade_com.RetrieveWsInventorySum('A', broker, account, '3008')
+        print(resp)
 
-
+    quote_com.Dispose()
+    trade_com.Dispose()
 # TODO: 把凱基的callback function資料轉接進rabbitmq, 這樣用自己的worker比較好開發

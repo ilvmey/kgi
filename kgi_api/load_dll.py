@@ -75,9 +75,8 @@ def onQuoteRcvMessage(sender, pkg):
 def onQuoteGetStatus(sender, status, msg):
     print('onQuoteGetStatus')
     print(msg)
-    print(f'status: {status}')
     smsg = bytes(msg).decode('UTF-8','strict')
-    print(status == COM_STATUS.LOGIN_READY)
+
     if status == COM_STATUS.LOGIN_READY:
         print(f'STATUS:LOGIN_READY:[{smsg}]')
 
@@ -86,7 +85,7 @@ def onTradeRcvMessage(sender, pkg):
     global trade_receive_message
     trade_receive_message = pkg
     dt = pkg.DT
-    # print(f'onTradeRcvMessage DT=[{dt}]')
+    print(f'onTradeRcvMessage DT=[{dt}]')
 
     if (pkg.DT==DT.LOGIN.value__):
         if (pkg.Code==0):
