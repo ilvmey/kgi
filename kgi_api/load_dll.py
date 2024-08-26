@@ -25,13 +25,13 @@ from Intelligence import RECOVER_STATUS
 
 def initialize():
     global quote_com
-    print('QuoteCom API initialize........')
     quote_com = initialize_quote_com()
     trade_com = initialize_trade_com()
     return quote_com, trade_com
 
 
 def initialize_quote_com():
+    print('QuoteCom API initialize........')
     token='b6eb'
     sid='API'
     quote_com = QuoteCom('', 8000, sid, token)
@@ -50,13 +50,14 @@ def initialize_trade_com():
     ridDict=dict()
     trade_com.OnRcvMessage += onTradeRcvMessage
     trade_com.OnGetStatus += onTradeGetStatus
-#     trade_com.OnRecoverStatus += OnRecoverStatus
+    # trade_com.OnRecoverStatus += OnRecoverStatus
     return trade_com
 
 
 def onQuoteRcvMessage(sender, pkg):
     global quote_receive_message
     quote_receive_message = pkg
+    print(f'onQuoteRcvMessage:{pkg.DT}')
     if (pkg.DT==DT.LOGIN.value__):
         account_count=pkg.Count
         print(f'登入成功, 帳號筆數[{account_count}]')
@@ -72,9 +73,12 @@ def onQuoteRcvMessage(sender, pkg):
         #     print('無證券報價API權限')
 
 def onQuoteGetStatus(sender, status, msg):
+    print('onQuoteGetStatus')
     print(msg)
+    print(f'status: {status}')
     smsg = bytes(msg).decode('UTF-8','strict')
-    if (status==COM_STATUS.LOGIN_READY):
+    print(status == COM_STATUS.LOGIN_READY)
+    if status == COM_STATUS.LOGIN_READY:
         print(f'STATUS:LOGIN_READY:[{smsg}]')
 
 

@@ -27,13 +27,18 @@ def get_accounts():
             if load_dll.quote_receive_message.DT==DT.LOGIN.value__:
                 brokers = []
                 accounts = []
-                for subpkg in load_dll.quote_receive_message.p001503_2:
-                    broker = subpkg.BrokeId
-                    account = subpkg.Account
-                    print(f'帳號資料: 分公司=[{broker}], 帳號=[{account}]')
-                    brokers.append(broker)
-                    accounts.append(account)
-                return brokers, accounts
+                try:
+                    for subpkg in load_dll.quote_receive_message.p001503_2:
+                        broker = subpkg.BrokeId
+                        account = subpkg.Account
+                        print(f'帳號資料: 分公司=[{broker}], 帳號=[{account}]')
+                        brokers.append(broker)
+                        accounts.append(account)
+                except Exception as e:
+                    print(f'get account data error: {e}')
+                finally:
+                    return brokers, accounts
+
 
 def login_trade_api():
     timeout=5000
@@ -51,7 +56,7 @@ if __name__ == '__main__':
     brokers, accounts = login_quote_api()
     login_trade_api()
 
-    while True:
+    while brokers and accounts:
         trade_com.RetrieveWsInventorySum('B', brokers[0], accounts[0], '2330')
         time.sleep(1)
 
