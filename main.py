@@ -4,7 +4,7 @@ import kgi_api.load_dll as load_dll
 
 quote_com, trade_com = load_dll.initialize()
 
-from Intelligence import IdxKind    #from namespace import class
+from Intelligence import IdxKind
 from Intelligence import DT
 ACCOUNT = os.getenv('KGI_ACCOUNT')
 PASSWORD = os.getenv('KGI_PASSWORD')
@@ -44,7 +44,8 @@ def login_trade_api():
     timeout=10000
     trade_com.ComStatus()
     trade_com.Connect(TRADE_HOST, TRADE_PORT, timeout)
-    while True:
+    retry_times = 5
+    for _ in range(retry_times):
         time.sleep(1)
         if trade_com.ComStatus().ToString() == 'CONNECT_READY':
             trade_com.AutoSubReportSecurity=True
