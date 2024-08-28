@@ -5,13 +5,13 @@ dlls = ['Package', 'PushClient', 'QuoteCom', 'TradeCom']
 for dll in dlls:
     clr.AddReference(f'{dll_path}/{dll}')
 
-from Package import PackageBase  #from namespace import class
-from Package import P001503         #from namespace import class
-from Intelligence import PushClient #from namespace import class
-from Intelligence import QuoteCom   #from namespace import class
-from Intelligence import COM_STATUS #from namespace import class
-from Intelligence import DT         #from namespace import class
-from Intelligence import IdxKind    #from namespace import class
+from Package import PackageBase
+from Package import P001503
+from Intelligence import PushClient
+from Intelligence import QuoteCom
+from Intelligence import COM_STATUS
+from Intelligence import DT
+from Intelligence import IdxKind
 
 from Smart import TaiFexCom
 
@@ -24,7 +24,6 @@ from Intelligence import TIME_IN_FORCE
 from Intelligence import RECOVER_STATUS
 
 def initialize():
-    global quote_com
     quote_com = initialize_quote_com()
     trade_com = initialize_trade_com()
     return quote_com, trade_com
@@ -32,6 +31,8 @@ def initialize():
 
 def initialize_quote_com():
     print('QuoteCom API initialize........')
+    global quote_com
+
     token='b6eb'
     sid='API'
     quote_com = QuoteCom('', 8000, sid, token)
@@ -40,12 +41,12 @@ def initialize_quote_com():
 
     return quote_com
 def initialize_trade_com():
-
+    print('TradeCom API initialize........')
     global trade_com
     global ridDict
 
     sid='API'
-    print('TradeCom API initialize........')
+
     trade_com = TaiFexCom('', 8000, sid)
     ridDict=dict()
     trade_com.OnRcvMessage += onTradeRcvMessage
@@ -61,16 +62,7 @@ def onQuoteRcvMessage(sender, pkg):
     if (pkg.DT==DT.LOGIN.value__):
         account_count=pkg.Count
         print(f'登入成功, 帳號筆數[{account_count}]')
-        # for subpkg in pkg.p001503_2:
-        #     broker = subpkg.BrokeId
-        #     account = subpkg.Account
-        #     print(f'帳號資料: 分公司=[{broker}], 帳號=[{account}]')
-        # if (int(quote_com.QuoteStock)==True):
-        #     print('可註冊證券報價')
-        #     if (pkg.Code==0):
-        #         print(f'可註冊檔數：{pkg.Qnum}\n')
-        # else:
-        #     print('無證券報價API權限')
+
 
 def onQuoteGetStatus(sender, status, msg):
     print('onQuoteGetStatus')
@@ -87,8 +79,8 @@ def onTradeRcvMessage(sender, pkg):
     dt = pkg.DT
     print(f'onTradeRcvMessage DT=[{dt}]')
 
-    if pkg.DT==DT.LOGIN.value__:
-        if (pkg.Code==0):
+    if pkg.DT == DT.LOGIN.value__:
+        if (pkg.Code == 0):
             print('登入成功')
         else:
             errmsg=trade_com.GetMessageMap(pkg.Code)
@@ -96,7 +88,7 @@ def onTradeRcvMessage(sender, pkg):
             msg = errmsg
             print(f'登入失敗 CODE=[{code}], MSG=[{msg}]')
 
-    if pkg.DT==DT.FINANCIAL_WSINVENTORYSUM.value__:
+    if pkg.DT == DT.FINANCIAL_WSINVENTORYSUM.value__:
         code = pkg.Code
         code_desc = pkg.CodeDesc
         print(f'證券庫存彙總查詢回覆 CODE=[{code},{code_desc}]]')
@@ -106,8 +98,8 @@ def onTradeRcvMessage(sender, pkg):
         if pkg.Code == 0:
             for subpkg in pkg.Detail:
                 symbol = subpkg.Symbol
-                netqty5=subpkg. NETQTY5
-                asset=subpkg. ASSET
+                netqty5=subpkg.NETQTY5
+                asset=subpkg.ASSET
                 netpl=subpkg.NETPL
                 print(f'商品代碼={symbol}')
                 print(f'今日餘額股數={netqty5}')
