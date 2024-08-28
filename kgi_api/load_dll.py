@@ -87,7 +87,7 @@ def onTradeRcvMessage(sender, pkg):
     dt = pkg.DT
     print(f'onTradeRcvMessage DT=[{dt}]')
 
-    if (pkg.DT==DT.LOGIN.value__):
+    if pkg.DT==DT.LOGIN.value__:
         if (pkg.Code==0):
             print('登入成功')
         else:
@@ -96,19 +96,23 @@ def onTradeRcvMessage(sender, pkg):
             msg = errmsg
             print(f'登入失敗 CODE=[{code}], MSG=[{msg}]')
 
-    if (pkg.DT==DT.FINANCIAL_WSINVENTORYSUM.value__):
+    if pkg.DT==DT.FINANCIAL_WSINVENTORYSUM.value__:
         code = pkg.Code
         code_desc = pkg.CodeDesc
         print(f'證券庫存彙總查詢回覆 CODE=[{code},{code_desc}]]')
         rows = pkg.Rows
-        print(f'明細筆數=[{rows}]')
+        print(f'明細筆數={rows}')
 
-        if (pkg.Code == 0) :
+        if pkg.Code == 0:
             for subpkg in pkg.Detail:
-                print("商品代碼=[{symbol}]".format(symbol=subpkg.Symbol))
-                print("今日餘額股數=[{ netqty5}]".format(netqty5=subpkg. NETQTY5))
-                print("庫存市值=[{ asset }]".format(asset=subpkg. ASSET))
-                print("未實現損益=[{netpl}]".format(netpl=subpkg.NETPL))
+                symbol = subpkg.Symbol
+                netqty5=subpkg. NETQTY5
+                asset=subpkg. ASSET
+                netpl=subpkg.NETPL
+                print(f'商品代碼={symbol}')
+                print(f'今日餘額股數={netqty5}')
+                print(f'庫存市值={asset}')
+                print(f'未實現損益={netpl}')
 
 
 def onTradeGetStatus(sender, status, msg):
