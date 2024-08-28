@@ -36,8 +36,8 @@ def initialize_quote_com():
     token='b6eb'
     sid='API'
     quote_com = QuoteCom('', 8000, sid, token)
-    quote_com.OnRcvMessage += onQuoteRcvMessage
-    quote_com.OnGetStatus += onQuoteGetStatus
+    quote_com.OnRcvMessage += on_quote_receive_message
+    quote_com.OnGetStatus += on_quote_get_status
 
     return quote_com
 def initialize_trade_com():
@@ -49,23 +49,23 @@ def initialize_trade_com():
 
     trade_com = TaiFexCom('', 8000, sid)
     ridDict=dict()
-    trade_com.OnRcvMessage += onTradeRcvMessage
-    trade_com.OnGetStatus += onTradeGetStatus
-    # trade_com.OnRecoverStatus += OnRecoverStatus
+    trade_com.OnRcvMessage += on_trade_receive_message
+    trade_com.OnGetStatus += on_trade_get_status
+    trade_com.OnRecoverStatus += on_recover_status
     return trade_com
 
 
-def onQuoteRcvMessage(sender, pkg):
+def on_quote_receive_message(sender, pkg):
     global quote_receive_message
     quote_receive_message = pkg
-    print(f'onQuoteRcvMessage:{pkg.DT}')
+    print(f'on_quote_receive_message:{pkg.DT}')
     if (pkg.DT==DT.LOGIN.value__):
         account_count=pkg.Count
         print(f'登入成功, 帳號筆數[{account_count}]')
 
 
-def onQuoteGetStatus(sender, status, msg):
-    print('onQuoteGetStatus')
+def on_quote_get_status(sender, status, msg):
+    print('on_quote_get_status')
     print(msg)
     smsg = bytes(msg).decode('UTF-8','strict')
 
@@ -73,11 +73,11 @@ def onQuoteGetStatus(sender, status, msg):
         print(f'STATUS:LOGIN_READY:[{smsg}]')
 
 
-def onTradeRcvMessage(sender, pkg):
+def on_trade_receive_message(sender, pkg):
     global trade_receive_message
     trade_receive_message = pkg
     dt = pkg.DT
-    print(f'onTradeRcvMessage DT=[{dt}]')
+    print(f'on_trade_receive_message DT=[{dt}]')
 
     if pkg.DT == DT.LOGIN.value__:
         if (pkg.Code == 0):
@@ -107,8 +107,21 @@ def onTradeRcvMessage(sender, pkg):
                 print(f'未實現損益={netpl}')
 
 
-def onTradeGetStatus(sender, status, msg):
+def on_trade_get_status(sender, status, msg):
     smsg = ' '
     print(msg)
     if (status==COM_STATUS.CONNECT_READY):
         print(f'交易伺服器連線成功:[{smsg}]')
+
+def on_recover_status(sender, topic, status, recover_count):
+    if (status==RECOVER_STATUS.RS_DONE):
+        #回補資料結束
+        if (recover_count==0):
+            print(f'結束回補 Topic:{topic}')
+        else:
+            tp = topic
+            count = recover_count
+            print(f'結束回補 Topic={tp}, 筆數={count}')
+    elif (status==RECOVER_STATUS.RS_BEGIN):
+        #開始回補資料
+        print("開始回補 Topic:["+topic+"]")

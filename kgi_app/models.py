@@ -1,6 +1,6 @@
 from django.db import models
 
-# Create your models here.
+
 class User(models.Model):
     name = models.CharField(max_length=10)
     id_number = models.CharField(max_length=10, unique=True)
@@ -8,4 +8,10 @@ class User(models.Model):
 
 
 class Account(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='accounts')
+    broker = models.CharField(max_length=4)
+    account_number = models.CharField(max_length=10, unique=True)
+
+    @property
+    def full_account_number(self):
+        return f'{self.broker}{self.account_number}'

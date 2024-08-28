@@ -2,6 +2,12 @@ import csv
 import os
 import time
 from kgi_api.kgi_client import KGIClient
+import django
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'kgi_project.settings')
+
+django.setup()
+from kgi_app.models import User
 
 
 QUOTE_HOST = 'quoteapi.kgi.com.tw'
@@ -9,22 +15,8 @@ QUOTE_PORT = 443
 TRADE_HOST = 'tradeapi.kgi.com.tw'
 TRADE_PORT = 443
 
-retry_times = 5
-
-def read_csv(filename='account.csv'):
-    with open(filename, mode='r', encoding='utf-8') as file:
-        reader = csv.reader(file)
-        rows = [row for row in reader]
-    return rows
 
 def get_users():
-    import django
-
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'kgi_project.settings')
-
-    django.setup()
-    from kgi_app.models import User
-
     users = User.objects.all()
     return users
 
