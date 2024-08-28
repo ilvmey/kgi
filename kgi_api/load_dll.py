@@ -48,12 +48,10 @@ def initialize_quote_com():
 def initialize_trade_com():
     print('TradeCom API initialize........')
     global trade_com
-    global ridDict
 
     sid='API'
 
     trade_com = TaiFexCom('', 8000, sid)
-    ridDict=dict()
     trade_com.OnRcvMessage += on_trade_receive_message
     trade_com.OnGetStatus += on_trade_get_status
     trade_com.OnRecoverStatus += on_recover_status
@@ -87,12 +85,12 @@ def on_trade_receive_message(sender, pkg):
 
     if pkg.DT == DT.LOGIN.value__:
         if (pkg.Code == 0):
-            print('登入成功')
+            print('交易伺服器登入成功')
         else:
             errmsg=trade_com.GetMessageMap(pkg.Code)
             code = pkg.Code
             msg = errmsg
-            print(f'登入失敗 CODE=[{code}], MSG=[{msg}]')
+            print(f'交易伺服器登入失敗 CODE=[{code}], MSG=[{msg}]')
 
     if pkg.DT == DT.FINANCIAL_WSINVENTORYSUM.value__:
         code = pkg.Code
