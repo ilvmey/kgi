@@ -23,9 +23,14 @@ from Intelligence import SIDE_FLAG
 from Intelligence import TIME_IN_FORCE
 from Intelligence import RECOVER_STATUS
 
+from message_queue.base import conn, TradeMessageProducer, trade_message_queue
+
+trade_receive_message_producer = TradeMessageProducer(conn, trade_message_queue)
+
 def initialize():
     quote_com = initialize_quote_com()
     trade_com = initialize_trade_com()
+
     return quote_com, trade_com
 
 
@@ -74,6 +79,7 @@ def on_quote_get_status(sender, status, msg):
 
 
 def on_trade_receive_message(sender, pkg):
+    # trade_receive_message_producer.send({'msg': pkg})
     global trade_receive_message
     trade_receive_message = pkg
     dt = pkg.DT
@@ -98,13 +104,13 @@ def on_trade_receive_message(sender, pkg):
         if pkg.Code == 0:
             for subpkg in pkg.Detail:
                 symbol = subpkg.Symbol
-                netqty5=subpkg.NETQTY5
-                asset=subpkg.ASSET
-                netpl=subpkg.NETPL
+                # netqty5=subpkg.NETQTY5
+                # asset=subpkg.ASSET
+                # netpl=subpkg.NETPL
                 print(f'商品代碼={symbol}')
-                print(f'今日餘額股數={netqty5}')
-                print(f'庫存市值={asset}')
-                print(f'未實現損益={netpl}')
+                # print(f'今日餘額股數={netqty5}')
+                # print(f'庫存市值={asset}')
+                # print(f'未實現損益={netpl}')
 
 
 def on_trade_get_status(sender, status, msg):
@@ -124,4 +130,4 @@ def on_recover_status(sender, topic, status, recover_count):
             print(f'結束回補 Topic={tp}, 筆數={count}')
     elif (status==RECOVER_STATUS.RS_BEGIN):
         #開始回補資料
-        print("開始回補 Topic:["+topic+"]")
+        print(f'開始回補 Topic:{topic}')
