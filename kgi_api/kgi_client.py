@@ -63,6 +63,9 @@ class KGIClient:
                         return data
 
     def get_inventory(self, broker, account):
+        '''
+        凱基證券的API太過不穩定，故結束開發該專案
+        '''
         for _ in range(self.retry_times):
             # 整股:A, 零股:B
             resp = self.trade_com.RetrieveWsInventorySum('B', broker, account, '')
